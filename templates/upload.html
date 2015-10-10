@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <h3 class>Uploaded files</h3>
+      <div>
+      This is a list of the files you just uploaded, click on them to load/download them
+      <ul>
+        {% for file in filenames %}
+          <li><a>{{file}}</a></li>
+        {% endfor %}
+      </ul>
+      </div>
+  </body>
+</html>
+ 
