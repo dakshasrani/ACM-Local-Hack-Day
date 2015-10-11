@@ -3,13 +3,8 @@
   <body>
     <h3 class>Uploaded files</h3>
       <div>
-      This is a list of the files you just uploaded, click on them to load/download them
-      <ul>
-        {% for file in filenames %}
-          <li><a>{{file}}</a></li>
-        {% endfor %}
-      </ul>
+      Word Cloud:
+      <img src="{{ url_for('static', filename=filename) }}"/>
       </div>
   </body>
 </html>
- 

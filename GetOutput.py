@@ -10,30 +10,48 @@ clarifai_api = ClarifaiApi("2N6hHrw6ECUTstHErD8UDBp7jhdJZDcNUpbQs9K6","ckT1Mk5oR
 
 #Counting number of files
 import os
-directory = '/Users/RichaShah/Documents/LocalHackDay/Images/'
-# directory = '/Users/RichaShah/Documents/Personal/Photos/December 2014 Trip Sorted Photos/Richa\'s iPad/12-28 Big Sur'
-number_of_files = len([item for item in os.listdir(directory) if os.path.isfile(os.path.join(directory, item))])
 
-tags = ""
-for item in os.listdir(directory):
-    if os.path.isfile(os.path.join(directory, item)):
-        file_path = '/Users/RichaShah/Documents/LocalHackDay/Images/'
-        file_path += str(item)
-        # print file_path
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
-        filter_words = ['women','woman', 'man', 'men', 'adult', 'wear', 'clothing', 'one', 'two', 'three', 'four', 'boy', 'girl']
-        result = clarifai_api.tag_images(open(file_path,'rb'))
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-        for word in result["results"][0]['result']['tag']['classes']:
-            if word not in filter_words:
-                tags += json.dumps(word).replace('"',"")
-                tags += " "
+def create_word_cloud():
+    directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads/')
+    number_of_files = len([item for item in os.listdir(directory) if os.path.isfile(os.path.join(directory, item))])
 
-print tags
+    tags = ""
+    for item in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, item)):
+            file_path = directory
+            file_path += str(item)
 
-wordcloud = WordCloud().generate(tags)
-img=plt.imshow(wordcloud)
-plt.axis("off")
-plt.savefig('/Users/RichaShah/Documents/LocalHackDay/wordcloud.png')
+            if allowed_file(file_path):
+                filter_words = ['women','woman', 'man', 'men', 'adult', 'wear', 'clothing', 'one', 'two', 'three', 'four', 'boy', 'girl']
+                result = clarifai_api.tag_images(open(file_path,'rb'))
 
-# execfile('/Users/RichaShah/Documents/LocalHackDay/GetOutput.py')
+                for word in result["results"][0]['result']['tag']['classes']:
+                    if word not in filter_words:
+                        tags += json.dumps(word).replace('"',"")
+                        tags += " "
+
+    print tags
+
+    wordcloud = WordCloud().generate(tags)
+    img=plt.imshow(wordcloud)
+    plt.axis("off")
+    image_path = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static'), 'wordcloud.png')
+    plt.savefig(image_path)
+    remove_uploaded_images()
+
+def remove_uploaded_images():
+    directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads/')
+    number_of_files = len([item for item in os.listdir(directory) if os.path.isfile(os.path.join(directory, item))])
+
+    tags = ""
+    for item in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, item)):
+            file_path = directory
+            file_path += str(item)
+            os.remove(file_path)

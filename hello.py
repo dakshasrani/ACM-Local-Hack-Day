@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import os
 from werkzeug import secure_filename
+import GetOutput
 
-UPLOAD_FOLDER = 'uploads/'
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads/')
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
@@ -14,7 +15,7 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET'])
 def get_root():
-    return render_template('index.html')   
+    return render_template('index.html')
 
 @app.route('/', methods=['POST'])
 def file_upload():
@@ -25,7 +26,8 @@ def file_upload():
         	filename = secure_filename(file.filename)
         	filenames.append(filename)
 	        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    return render_template('upload.html',filenames=filenames)
+	GetOutput.create_word_cloud()
+    return render_template('upload.html', filename='wordcloud.png')
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
