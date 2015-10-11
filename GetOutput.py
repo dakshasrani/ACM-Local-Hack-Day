@@ -1,7 +1,10 @@
 from clarifai.client import ClarifaiApi
 from wordcloud import WordCloud
+import matplotlib
+matplotlib.use("TkAgg")
 import json
 import matplotlib.pyplot as plt
+import pylab
 
 clarifai_api = ClarifaiApi("2N6hHrw6ECUTstHErD8UDBp7jhdJZDcNUpbQs9K6","ckT1Mk5oR-GX9i-65J8TC7nn_Lv9B_aaahtHqTLm")
 
@@ -18,7 +21,7 @@ for item in os.listdir(directory):
         file_path += str(item)
         # print file_path
 
-        filter_words = ['women','woman', ' man', ' men', 'adult', 'wear', 'clothing', ' one', 'two', 'three', 'four', 'boy', 'girl']
+        filter_words = ['women','woman', 'man', 'men', 'adult', 'wear', 'clothing', 'one', 'two', 'three', 'four', 'boy', 'girl']
         result = clarifai_api.tag_images(open(file_path,'rb'))
 
         for word in result["results"][0]['result']['tag']['classes']:
@@ -31,4 +34,6 @@ print tags
 wordcloud = WordCloud().generate(tags)
 img=plt.imshow(wordcloud)
 plt.axis("off")
-plt.show()
+plt.savefig('/Users/RichaShah/Documents/LocalHackDay/wordcloud.png')
+
+# execfile('/Users/RichaShah/Documents/LocalHackDay/GetOutput.py')
